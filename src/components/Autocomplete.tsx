@@ -94,7 +94,7 @@ export const Autocomplete = ({ persons, onSelected, delay }: Props) => {
             type="text"
             placeholder="Enter a part of the name"
             className="input"
-            data-cy="search-input"
+            data-qa="search-input"
             value={query}
             onChange={e => hadlerQueryCgange(e.target.value)}
             onFocus={hadlerFocusInput}
@@ -106,7 +106,7 @@ export const Autocomplete = ({ persons, onSelected, delay }: Props) => {
             {arrPers.map(person => (
               <div
                 className="dropdown-item"
-                data-cy="suggestion-item"
+                data-qa="suggestion-item"
                 key={person.name}
                 onClick={() => handlerSelectPerson(person)}
               >
@@ -124,7 +124,7 @@ export const Autocomplete = ({ persons, onSelected, delay }: Props) => {
                     is-align-self-flex-start
                     "
                 role="alert"
-                data-cy="no-suggestions-message"
+                data-qa="no-suggestions-message"
               >
                 <p className="has-text-danger">No matching suggestions</p>
               </div>
