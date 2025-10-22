@@ -14,7 +14,7 @@ export const App: React.FC = () => {
   return (
     <div className="container">
       <main className="section is-flex is-flex-direction-column">
-        <h1 className="title" data-cy="title">
+        <h1 className="title" data-cy="title" data-qa="title">
           {selectPerson
             ? `${selectPerson.name} (${selectPerson.born} - ${selectPerson.died})`
             : `No selected person`}
@@ -22,7 +22,7 @@ export const App: React.FC = () => {
 
         <Autocomplete
           persons={peopleFromServer}
-          onSelect={hadleSelect}
+          onSelected={hadleSelect}
           delay={300}
         />
       </main>

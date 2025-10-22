@@ -1,8 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Person } from '../types/Person';
+import cn from 'classnames';
+
 type Props = {
   persons: Person[];
-  onSelect: (per: Person | null) => void;
+  onSelected: (per: Person | null) => void;
   delay?: number;
 };
 
@@ -12,7 +14,7 @@ function filterPerson(arrPers: Person[], query: string) {
   );
 }
 
-export const Autocomplete = ({ persons, onSelect, delay }: Props) => {
+export const Autocomplete = ({ persons, onSelected, delay }: Props) => {
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [normalaizeQuery, setNormalaizeQuery] = useState('');
@@ -35,11 +37,11 @@ export const Autocomplete = ({ persons, onSelect, delay }: Props) => {
     setNormalaizeQuery(normName);
     prevNormQuery.current = normName;
     setIsOpen(false);
-    onSelect(person);
+    onSelected(person);
   };
 
   const hadlerFocusInput = () => {
-    if (query === '') {
+    if (query.trim() === '') {
       setNormalaizeQuery('');
       setIsOpen(true);
     } else {
@@ -48,13 +50,23 @@ export const Autocomplete = ({ persons, onSelect, delay }: Props) => {
   };
 
   const hadlerQueryCgange = (newValue: string) => {
-    setQuery(newValue);
-    onSelect(null);
     const normValue = newValue.trim().toLowerCase();
 
     if (timeRef.current) {
       window.clearTimeout(timeRef.current);
     }
+
+    if (normValue === '') {
+      setNormalaizeQuery('');
+      prevNormQuery.current = '';
+      setQuery(newValue);
+      setIsOpen(true);
+
+      return;
+    }
+
+    setQuery(newValue);
+    onSelected(null);
 
     timeRef.current = window.setTimeout(() => {
       if (normValue === prevNormQuery.current) {
@@ -76,7 +88,7 @@ export const Autocomplete = ({ persons, onSelect, delay }: Props) => {
 
   return (
     <>
-      <div className="dropdown is-active">
+      <div className={cn('dropdown', { 'is-active': isOpen })}>
         <div className="dropdown-trigger">
           <input
             type="text"
@@ -90,36 +102,34 @@ export const Autocomplete = ({ persons, onSelect, delay }: Props) => {
         </div>
 
         <div className="dropdown-menu" role="menu" data-cy="suggestions-list">
-          {isOpen && (
-            <div className="dropdown-content">
-              {arrPers.map(person => (
-                <div
-                  className="dropdown-item"
-                  data-cy="suggestion-item"
-                  key={person.name}
-                  onClick={() => handlerSelectPerson(person)}
-                >
-                  <p className="has-text-link">{person.name}</p>
-                </div>
-              ))}
+          <div className="dropdown-content">
+            {arrPers.map(person => (
+              <div
+                className="dropdown-item"
+                data-cy="suggestion-item"
+                key={person.name}
+                onClick={() => handlerSelectPerson(person)}
+              >
+                <p className="has-text-link">{person.name}</p>
+              </div>
+            ))}
 
-              {isOpen && arrPers.length === 0 && (
-                <div
-                  className="
+            {isOpen && arrPers.length === 0 && (
+              <div
+                className="
                     notification
                     is-danger
                     is-light
                     mt-3
                     is-align-self-flex-start
                     "
-                  role="alert"
-                  data-cy="no-suggestions-message"
-                >
-                  <p className="has-text-danger">No matching suggestions</p>
-                </div>
-              )}
-            </div>
-          )}
+                role="alert"
+                data-cy="no-suggestions-message"
+              >
+                <p className="has-text-danger">No matching suggestions</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
